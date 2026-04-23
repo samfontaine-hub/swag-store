@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sprinter Health — Anniversary Rewards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Brand tokens ── */
+    :root {
+      --purple:      #7B68C8;
+      --purple-light:#EEF0FF;
+      --purple-mid:  #C5BFED;
+      --navy:        #2D2D6B;
+      --navy-soft:   #3D4080;
+      --ink:         #1A1A3E;
+      --mist:        #F4F4FC;
+      --border:      #E2E0F5;
+      --white:       #ffffff;
+      --green:       #22C87A;
+      --green-light: #E6FBF2;
+      --radius:      14px;
+      --radius-sm:   8px;
+      --shadow:      0 2px 16px rgba(45,45,107,0.10);
+      --shadow-lg:   0 8px 40px rgba(45,45,107,0.16);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--mist);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+    }
+
+    .logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--navy);
+      letter-spacing: -0.3px;
+    }
+
+    .logo-text span {
+      color: var(--purple);
+      font-style: italic;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .points-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--purple-light);
+      border: 1px solid var(--purple-mid);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+    }
+
+    .points-badge .pts-num {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--purple);
+    }
+
+    .points-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--purple);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 60%, #5548A0 100%);
+      color: white;
+      padding: 56px 24px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(123,104,200,0.3) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--purple-mid);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(28px, 5vw, 44px);
+      line-height: 1.15;
+      margin-bottom: 12px;
+      color: white;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--purple-mid);
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      color: rgba(255,255,255,0.7);
+      max-width: 480px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .hero-balance {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius);
+      padding: 14px 28px;
+    }
+
+    .hero-balance .big-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 42px;
+      color: white;
+      line-height: 1;
+    }
+
+    .hero-balance .pts-label {
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 300;
+    }
+
+    /* ── Main layout ── */
+    .main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--navy);
+    }
+
+    .item-count {
+      font-size: 13px;
+      color: #8884AB;
+    }
+
+    /* ── Product grid ── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .product-img {
+      aspect-ratio: 4/3;
+      background: var(--purple-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-img .emoji-placeholder {
+      font-size: 64px;
+      opacity: 0.5;
+    }
+
+    .product-img .cost-pill {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--navy);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 4px 10px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .product-body {
+      padding: 16px 18px 18px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-category {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 6px;
+    }
+
+    .product-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .product-desc {
+      font-size: 13px;
+      color: #8884AB;
+      line-height: 1.5;
+      flex: 1;
+      margin-bottom: 16px;
+    }
+
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .pts-cost {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    .pts-cost .star {
+      color: var(--purple);
+      font-size: 14px;
+    }
+
+    .select-btn {
+      background: var(--purple);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .select-btn:hover  { background: var(--navy); }
+    .select-btn:active { transform: scale(0.97); }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 80px 24px;
+      color: #8884AB;
+    }
+
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 18px; color: var(--navy); margin-bottom: 8px; }
+    .empty-state p  { font-size: 14px; line-height: 1.6; }
+
+    /* ── Modal overlay ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26,26,62,0.55);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      backdrop-filter: blur(2px);
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp 0.22s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 24px 24px 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .modal-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--navy);
+      line-height: 1.2;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8884AB;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .modal-close:hover { background: var(--mist); }
+
+    .modal-img {
+      margin: 20px 24px;
+      border-radius: var(--radius);
+      background: var(--purple-light);
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      overflow: hidden;
+    }
+
+    .modal-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: var(--radius);
+    }
+
+    .modal-body { padding: 0 24px 24px; }
+
+    .modal-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .modal-cat {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--purple);
+    }
+
+    .modal-pts {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      background: var(--purple-light);
+      border-radius: 999px;
+      padding: 3px 10px;
+    }
+
+    .modal-desc {
+      font-size: 14px;
+      color: #6B6890;
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--navy-soft);
+      margin-bottom: 6px;
+    }
+
+    .form-select,
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--white);
+      transition: border-color 0.15s;
+      appearance: none;
+    }
+
+    .form-select:focus,
+    .form-input:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(123,104,200,0.12);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .address-section {
+      background: var(--mist);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .address-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 14px;
+    }
+
+    .confirm-btn {
+      width: 100%;
+      background: var(--purple);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .confirm-btn:hover  { background: var(--navy); }
+    .confirm-btn:active { transform: scale(0.99); }
+
+    .confirm-btn:disabled {
+      background: var(--purple-mid);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .cost-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--purple-light);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .cost-summary .label { color: var(--navy-soft); }
+    .cost-summary .value { font-weight: 600; color: var(--navy); }
+    .cost-summary .remaining { color: var(--purple); font-weight: 600; }
+
+    /* ── Success screen ── */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 48px 24px;
+    }
+
+    .success-screen.show { display: block; }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      background: var(--green-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 32px;
+    }
+
+    .success-screen h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    .success-screen p {
+      font-size: 14px;
+      color: #8884AB;
+      line-height: 1.6;
+      max-width: 340px;
+      margin: 0 auto;
+    }
+
+    /* ── Loading / error states ── */
+    .loading-state {
+      text-align: center;
+      padding: 80px 24px;
+      color: #8884AB;
+      font-size: 15px;
+    }
+
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--purple);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-banner {
+      background: #FFF0F0;
+      border: 1px solid #FFCDD2;
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      font-size: 14px;
+      color: #C62828;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .error-banner.show { display: block; }
+
+    /* ── Footer ── */
+    .store-footer {
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 12px;
+      color: #B0AEC8;
+      border-top: 1px solid var(--border);
+      background: var(--white);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .hero { padding: 40px 16px 36px; }
+      .main { padding: 28px 16px 60px; }
+      .form-row { grid-template-columns: 1fr; }
+      .header-inner { padding: 0 16px; }
+      .points-badge .pts-label-text { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <!-- Inline SVG approximating the Sprinter Health logo mark -->
+      <svg class="logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 2C12.477 2 8 6.477 8 12c0 7.732 10 22 10 22S28 19.732 28 12c0-5.523-4.477-10-10-10z" fill="#7B68C8"/>
+        <path d="M10 13l4-4 3 5 4-8 3 4" stroke="#1A1A3E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="18" cy="6" r="2" fill="#2D2D6B"/>
+      </svg>
+      <span class="logo-text">sprinter <em>health</em></span>
+    </div>
+    <div class="header-right">
+      <div class="points-badge">
+        <div class="points-dot"></div>
+        <span class="pts-label-text">Your balance:&nbsp;</span>
+        <span class="pts-num" id="header-balance">—</span>
+        <span style="font-size:13px;color:#8884AB;font-weight:400">pts</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-eyebrow">🎉 Anniversary Rewards</div>
+  <h1>You've earned it,<br><em id="hero-name">teammate</em>.</h1>
+  <p class="hero-sub">Browse your rewards below and pick something you'll love. Points never expire — save them up if you want something bigger.</p>
+  <div class="hero-balance">
+    <span class="big-num" id="hero-balance">—</span>
+    <span class="pts-label">points available</span>
+  </div>
+</section>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div class="error-banner" id="error-banner">
+    Something went wrong loading the store. Please try refreshing the page or contact <a href="mailto:recognition@sprinterhealth.com" style="color:inherit">recognition@sprinterhealth.com</a>.
+  </div>
+
+  <div id="loading-state" class="loading-state">
+    <div class="loading-spinner"></div>
+    Loading your rewards...
+  </div>
+
+  <div id="store-content" style="display:none">
+    <div class="section-head">
+      <h2 class="section-title">Available rewards</h2>
+      <span class="item-count" id="item-count"></span>
+    </div>
+    <div class="product-grid" id="product-grid"></div>
+    <div class="empty-state" id="empty-state" style="display:none">
+      <div class="empty-icon">✨</div>
+      <h3>More items coming soon</h3>
+      <p>Check back as new rewards are added to the catalog. Your points will be here waiting.</p>
+    </div>
+  </div>
+</main>
+
+<!-- ── PRODUCT MODAL ── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div id="modal-form-view">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Item name</h2>
+        <button class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-img" id="modal-img"></div>
+      <div class="modal-body">
+        <div class="modal-meta">
+          <span class="modal-cat" id="modal-cat"></span>
+          <span class="modal-pts">⭐ <span id="modal-pts"></span> pts</span>
+        </div>
+        <p class="modal-desc" id="modal-desc"></p>
+
+        <!-- Variant selector (hidden if no variants) -->
+        <div class="form-group" id="variant-group" style="display:none">
+          <label class="form-label" for="variant-select">Select size / option</label>
+          <select class="form-select" id="variant-select">
+            <option value="">Choose an option...</option>
+          </select>
+        </div>
+
+        <!-- Shipping address (shown for remote employees) -->
+        <div class="address-section" id="address-section">
+          <div class="address-section-title">📦 Shipping address</div>
+          <div class="form-group">
+            <label class="form-label" for="addr-street">Street address</label>
+            <input class="form-input" type="text" id="addr-street" placeholder="123 Main St">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="addr-city">City</label>
+              <input class="form-input" type="text" id="addr-city" placeholder="San Francisco">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="addr-state">State</label>
+              <input class="form-input" type="text" id="addr-state" placeholder="CA">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="addr-zip">ZIP code</label>
+              <input class="form-input" type="text" id="addr-zip" placeholder="94105">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="addr-country">Country</label>
+              <input class="form-input" type="text" id="addr-country" value="USA">
+            </div>
+          </div>
+        </div>
+
+        <!-- Cost summary -->
+        <div class="cost-summary" id="cost-summary">
+          <span class="label">Points used</span>
+          <span>
+            <span class="value" id="summary-cost"></span>
+            <span style="color:#8884AB;font-size:13px"> of </span>
+            <span class="value" id="summary-balance"></span>
+            <span style="color:#8884AB;font-size:13px"> pts</span>
+          </span>
+          <span class="remaining" id="summary-remaining"></span>
+        </div>
+
+        <div class="error-banner" id="modal-error"></div>
+
+        <button class="confirm-btn" id="confirm-btn" onclick="submitOrder()">
+          Confirm my selection
+        </button>
+      </div>
+    </div>
+
+    <!-- Success view (shown after submit) -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">✅</div>
+      <h2>You're all set!</h2>
+      <p id="success-msg">Your selection has been confirmed and sent to the team. Keep an eye out — something special is on its way!</p>
+      <button class="confirm-btn" style="margin-top:28px;max-width:240px;margin-left:auto;margin-right:auto" onclick="closeModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer class="store-footer">
+  Sprinter Health Anniversary Rewards &mdash; Questions? Email <a href="mailto:recognition@sprinterhealth.com" style="color:var(--purple)">recognition@sprinterhealth.com</a>
+</footer>
+
+
+<script>
+// ================================================================
+// CONFIGURATION
+// ================================================================
+const STORE_CONFIG = {
+  // Your Google Apps Script Web App URL
+  // After deploying your Apps Script as a web app, paste the URL here
+  api_url: "YOUR_APPS_SCRIPT_WEB_APP_URL",
+
+  // Google Sheet ID (from the URL of your sheet)
+  sheet_id: "YOUR_GOOGLE_SHEET_ID",
+
+  // Office address — employees with this shipping address see no address form
+  office_address: "4600 Bohannon Dr. Suite 100, Menlo Park, CA 94025",
+};
+
+// ================================================================
+// STATE
+// ================================================================
+let EMPLOYEE   = null;
+let CATALOG    = [];
+let SELECTED   = null;
+
+// ================================================================
+// INIT — read token from URL, load employee + catalog
+// ================================================================
+async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const token  = params.get("token");
+  const tier   = params.get("tier") || "standard";
+
+  if (!token) {
+    showError("No valid store link found. Please use the link from your anniversary email.");
+    return;
+  }
+
+  try {
+    // Load employee data and catalog in parallel
+    const [empData, catalogData] = await Promise.all([
+      apiFetch("getEmployee", { token }),
+      apiFetch("getCatalog",  { tier  }),
+    ]);
+
+    EMPLOYEE = empData;
+    CATALOG  = catalogData.filter(item => item.active === "TRUE" || item.active === true);
+
+    renderHero();
+    renderCatalog();
+    document.getElementById("loading-state").style.display  = "none";
+    document.getElementById("store-content").style.display  = "block";
+
+  } catch (err) {
+    showError();
+    console.error(err);
+  }
+}
+
+// ================================================================
+// RENDER HERO
+// ================================================================
+function renderHero() {
+  const balance = EMPLOYEE.points_balance || 0;
+  document.getElementById("hero-name").textContent    = EMPLOYEE.first_name || "teammate";
+  document.getElementById("hero-balance").textContent = balance.toLocaleString();
+  document.getElementById("header-balance").textContent = balance.toLocaleString();
+}
+
+// ================================================================
+// RENDER CATALOG
+// ================================================================
+function renderCatalog() {
+  const balance     = EMPLOYEE.points_balance || 0;
+  const affordable  = CATALOG.filter(item => parseInt(item.point_cost) <= balance);
+  const grid        = document.getElementById("product-grid");
+  const emptyState  = document.getElementById("empty-state");
+  const countEl     = document.getElementById("item-count");
+
+  grid.innerHTML = "";
+
+  if (affordable.length === 0) {
+    emptyState.style.display = "block";
+    countEl.textContent = "";
+    return;
+  }
+
+  countEl.textContent = affordable.length + " item" + (affordable.length !== 1 ? "s" : "");
+
+  affordable.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "product-card";
+    card.onclick   = () => openModal(item);
+
+    const imgContent = item.image_url
+      ? `<img src="${escHtml(item.image_url)}" alt="${escHtml(item.name)}" loading="lazy">`
+      : `<div class="emoji-placeholder">${categoryEmoji(item.category)}</div>`;
+
+    card.innerHTML = `
+      <div class="product-img">
+        ${imgContent}
+        <div class="cost-pill">⭐ ${parseInt(item.point_cost).toLocaleString()} pts</div>
+      </div>
+      <div class="product-body">
+        <div class="product-category">${escHtml(item.category || "")}</div>
+        <div class="product-name">${escHtml(item.name)}</div>
+        <div class="product-desc">${escHtml(item.description || "")}</div>
+        <div class="product-footer">
+          <div class="pts-cost">
+            <span class="star">⭐</span>
+            ${parseInt(item.point_cost).toLocaleString()} pts
+          </div>
+          <button class="select-btn">Select</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ================================================================
+// MODAL
+// ================================================================
+function openModal(item) {
+  SELECTED = item;
+  const balance = EMPLOYEE.points_balance || 0;
+  const cost    = parseInt(item.point_cost);
+
+  document.getElementById("modal-title").textContent = item.name;
+  document.getElementById("modal-cat").textContent   = item.category || "";
+  document.getElementById("modal-pts").textContent   = cost.toLocaleString();
+  document.getElementById("modal-desc").textContent  = item.description || "";
+  document.getElementById("summary-cost").textContent      = cost.toLocaleString();
+  document.getElementById("summary-balance").textContent   = balance.toLocaleString();
+  document.getElementById("summary-remaining").textContent = (balance - cost).toLocaleString() + " pts left";
+
+  // Image
+  const imgEl = document.getElementById("modal-img");
+  imgEl.innerHTML = item.image_url
+    ? `<img src="${escHtml(item.image_url)}" alt="${escHtml(item.name)}">`
+    : categoryEmoji(item.category);
+
+  // Variants
+  const variantGroup  = document.getElementById("variant-group");
+  const variantSelect = document.getElementById("variant-select");
+  variantSelect.innerHTML = '<option value="">Choose an option...</option>';
+
+  if (item.variants && item.variants.trim()) {
+    const variants = item.variants.split(",").map(v => v.trim()).filter(Boolean);
+    if (variants.length > 0) {
+      variants.forEach(v => {
+        const opt = document.createElement("option");
+        opt.value = opt.textContent = v;
+        variantSelect.appendChild(opt);
+      });
+      variantGroup.style.display = "block";
+    } else {
+      variantGroup.style.display = "none";
+    }
+  } else {
+    variantGroup.style.display = "none";
+  }
+
+  // Address section — hide for office employees (address already on file)
+  const isOffice = EMPLOYEE.shipping_address === STORE_CONFIG.office_address;
+  document.getElementById("address-section").style.display = isOffice ? "none" : "block";
+
+  // Pre-fill address if we have it from Rippling
+  if (!isOffice && EMPLOYEE.shipping_address) {
+    const parts = EMPLOYEE.shipping_address.split(",").map(s => s.trim());
+    document.getElementById("addr-street").value  = parts[0] || "";
+    document.getElementById("addr-city").value    = parts[1] || "";
+    document.getElementById("addr-state").value   = parts[2] || "";
+    document.getElementById("addr-zip").value     = parts[3] || "";
+    document.getElementById("addr-country").value = parts[4] || "USA";
+  }
+
+  // Reset state
+  document.getElementById("modal-form-view").style.display = "block";
+  document.getElementById("success-screen").classList.remove("show");
+  document.getElementById("modal-error").classList.remove("show");
+  document.getElementById("confirm-btn").disabled = false;
+
+  document.getElementById("modal-overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  document.getElementById("modal-overlay").classList.remove("open");
+  document.body.style.overflow = "";
+  SELECTED = null;
+}
+
+// Close on overlay click
+document.getElementById("modal-overlay").addEventListener("click", function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ================================================================
+// SUBMIT ORDER
+// ================================================================
+async function submitOrder() {
+  if (!SELECTED) return;
+
+  const variantGroup  = document.getElementById("variant-group");
+  const variantSelect = document.getElementById("variant-select");
+  const isOffice      = EMPLOYEE.shipping_address === STORE_CONFIG.office_address;
+  const errorEl       = document.getElementById("modal-error");
+  const confirmBtn    = document.getElementById("confirm-btn");
+
+  errorEl.classList.remove("show");
+
+  // Validate variant if shown
+  if (variantGroup.style.display !== "none" && !variantSelect.value) {
+    errorEl.textContent = "Please select a size or option before confirming.";
+    errorEl.classList.add("show");
+    return;
+  }
+
+  // Validate address if remote
+  if (!isOffice) {
+    const street = document.getElementById("addr-street").value.trim();
+    const city   = document.getElementById("addr-city").value.trim();
+    const zip    = document.getElementById("addr-zip").value.trim();
+    if (!street || !city || !zip) {
+      errorEl.textContent = "Please fill in your full shipping address before confirming.";
+      errorEl.classList.add("show");
+      return;
+    }
+  }
+
+  // Build shipping address string
+  let shippingAddress = STORE_CONFIG.office_address;
+  if (!isOffice) {
+    shippingAddress = [
+      document.getElementById("addr-street").value.trim(),
+      document.getElementById("addr-city").value.trim(),
+      document.getElementById("addr-state").value.trim(),
+      document.getElementById("addr-zip").value.trim(),
+      document.getElementById("addr-country").value.trim(),
+    ].filter(Boolean).join(", ");
+  }
+
+  const order = {
+    employee_id:      EMPLOYEE.employee_id,
+    item_id:          SELECTED.item_id,
+    item_name:        SELECTED.name,
+    variant:          variantSelect.value || "",
+    point_cost:       parseInt(SELECTED.point_cost),
+    shipping_address: shippingAddress,
+    token:            new URLSearchParams(window.location.search).get("token"),
+  };
+
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = "Submitting...";
+
+  try {
+    await apiFetch("submitOrder", order);
+
+    // Show success
+    document.getElementById("modal-form-view").style.display = "none";
+    document.getElementById("success-screen").classList.add("show");
+
+    const remaining = (EMPLOYEE.points_balance - order.point_cost).toLocaleString();
+    document.getElementById("success-msg").textContent =
+      isOffice
+        ? `Your selection has been confirmed! Your ${SELECTED.name} will be ready for the next swag day at the Menlo Park office. You have ${remaining} points remaining.`
+        : `Your ${SELECTED.name} is on its way! Expect delivery in 7–10 business days to your shipping address. You have ${remaining} points remaining.`;
+
+    // Update displayed balance
+    EMPLOYEE.points_balance -= order.point_cost;
+    document.getElementById("hero-balance").textContent   = EMPLOYEE.points_balance.toLocaleString();
+    document.getElementById("header-balance").textContent = EMPLOYEE.points_balance.toLocaleString();
+
+    // Re-render catalog with updated balance
+    renderCatalog();
+
+  } catch (err) {
+    errorEl.textContent = "Something went wrong submitting your order. Please try again or email recognition@sprinterhealth.com.";
+    errorEl.classList.add("show");
+    confirmBtn.disabled    = false;
+    confirmBtn.textContent = "Confirm my selection";
+    console.error(err);
+  }
+}
+
+// ================================================================
+// API HELPER
+// ================================================================
+async function apiFetch(action, params = {}) {
+  const url = new URL(STORE_CONFIG.api_url);
+  url.searchParams.set("action", action);
+  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error("API error: " + res.status);
+
+  const json = await res.json();
+  if (json.error) throw new Error(json.error);
+  return json.data;
+}
+
+// ================================================================
+// UTILITIES
+// ================================================================
+function showError(msg) {
+  document.getElementById("loading-state").style.display = "none";
+  const banner = document.getElementById("error-banner");
+  if (msg) banner.textContent = msg;
+  banner.classList.add("show");
+  document.getElementById("store-content").style.display = "block";
+}
+
+function escHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function categoryEmoji(cat) {
+  const map = {
+    "Apparel": "👕", "Drinkware": "☕", "Bags": "🎒",
+    "Desk & office": "📓", "Tech": "💻", "Wellness": "🧘",
+    "default": "🎁"
+  };
+  return map[cat] || map["default"];
+}
+
+// ================================================================
+// START
+// ================================================================
+init();
+</script>
+</body>
+</html>
