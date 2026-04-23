@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sprinter Health — Swag Store Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <style>
+    :root {
+      --purple:      #7B68C8;
+      --purple-light:#EEF0FF;
+      --purple-mid:  #C5BFED;
+      --navy:        #2D2D6B;
+      --navy-soft:   #3D4080;
+      --ink:         #1A1A3E;
+      --mist:        #F4F4FC;
+      --border:      #E2E0F5;
+      --white:       #ffffff;
+      --green:       #22C87A;
+      --green-light: #E6FBF2;
+      --red:         #E53935;
+      --red-light:   #FFEBEE;
+      --amber:       #F59E0B;
+      --amber-light: #FFFBEB;
+      --radius:      12px;
+      --radius-sm:   8px;
+      --shadow:      0 2px 12px rgba(45,45,107,0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--mist);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── Auth gate ── */
+    .auth-gate {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+    }
+
+    .auth-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 48px 40px;
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .auth-logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--navy);
+    }
+
+    .auth-logo-text em { color: var(--purple); font-style: italic; }
+
+    .auth-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .auth-sub {
+      font-size: 13px;
+      color: #8884AB;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .auth-error {
+      background: var(--red-light);
+      color: var(--red);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .auth-error.show { display: block; }
+
+    /* ── App shell (hidden until authed) ── */
+    .app { display: none; }
+    .app.show { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .sidebar-logo {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sidebar-logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 16px;
+      color: white;
+    }
+
+    .sidebar-logo-text em { color: var(--purple-mid); font-style: italic; }
+
+    .sidebar-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      padding: 16px 20px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      border-radius: 0;
+      transition: background 0.15s, color 0.15s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: white; }
+    .nav-item.active { background: rgba(123,104,200,0.25); color: white; }
+
+    .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--purple);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .sign-out-btn {
+      margin-top: 8px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+    }
+
+    .sign-out-btn:hover { color: rgba(255,255,255,0.6); }
+
+    /* ── Main content ── */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px;
+      min-width: 0;
+    }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .page-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      color: var(--navy);
+    }
+
+    /* ── Stat cards ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #8884AB;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      color: var(--navy);
+      line-height: 1;
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: #8884AB;
+      margin-top: 4px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      border: none;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--purple); color: white; }
+    .btn-primary:hover { background: var(--navy); }
+    .btn-outline { background: transparent; color: var(--navy); border: 1px solid var(--border); }
+    .btn-outline:hover { background: var(--mist); }
+    .btn-danger { background: var(--red-light); color: var(--red); }
+    .btn-danger:hover { background: #FFCDD2; }
+    .btn-success { background: var(--green-light); color: #15803D; }
+    .btn-success:hover { background: #BBF7D0; }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+    /* ── Tables ── */
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #8884AB;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--ink);
+      vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--mist); }
+
+    /* ── Status badges ── */
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-new      { background: var(--purple-light); color: var(--navy); }
+    .badge-picked   { background: var(--amber-light);  color: #92400E; }
+    .badge-shipped  { background: var(--green-light);  color: #15803D; }
+    .badge-awaiting { background: #FFF3CD; color: #856404; }
+    .badge-active   { background: var(--green-light);  color: #15803D; }
+    .badge-inactive { background: #F3F4F6; color: #6B7280; }
+
+    /* ── Forms ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 20px;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--navy-soft);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--white);
+      transition: border-color 0.15s;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(123,104,200,0.12);
+    }
+
+    .form-textarea { resize: vertical; min-height: 80px; }
+
+    .form-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    /* ── Search bar ── */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--white);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(123,104,200,0.12);
+    }
+
+    /* ── Filter tabs ── */
+    .filter-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      width: fit-content;
+    }
+
+    .filter-tab {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: #8884AB;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .filter-tab.active {
+      background: var(--purple);
+      color: white;
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--navy);
+      color: white;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 999;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+      max-width: 320px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success { background: #15803D; }
+    .toast.error   { background: var(--red); }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center;
+      padding: 48px 24px;
+      color: #8884AB;
+    }
+
+    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty h3   { font-size: 16px; color: var(--navy); margin-bottom: 6px; }
+    .empty p    { font-size: 13px; }
+
+    /* ── Points ledger ── */
+    .ledger-row-credit { color: #15803D; font-weight: 600; }
+    .ledger-row-debit  { color: var(--red); font-weight: 600; }
+
+    /* ── Loading ── */
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--purple);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-row td {
+      text-align: center;
+      padding: 32px;
+      color: #8884AB;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── AUTH GATE ── -->
+<div class="auth-gate" id="auth-gate">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+        <path d="M18 2C12.477 2 8 6.477 8 12c0 7.732 10 22 10 22S28 19.732 28 12c0-5.523-4.477-10-10-10z" fill="#7B68C8"/>
+        <path d="M10 13l4-4 3 5 4-8 3 4" stroke="#1A1A3E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="18" cy="6" r="2" fill="#2D2D6B"/>
+      </svg>
+      <span class="auth-logo-text">sprinter <em>health</em></span>
+    </div>
+    <div class="auth-title">Swag Store Admin</div>
+    <div class="auth-sub">Sign in with your Sprinter Health Google account to continue.</div>
+    <div class="auth-error" id="auth-error">Access restricted to @sprinterhealth.com accounts only.</div>
+
+    <!-- Google Sign In button renders here -->
+    <div id="g_id_onload"
+      data-client_id="YOUR_GOOGLE_OAUTH_CLIENT_ID"
+      data-callback="handleGoogleLogin"
+      data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin"
+      data-type="standard"
+      data-size="large"
+      data-theme="outline"
+      data-text="sign_in_with"
+      data-shape="rectangular"
+      data-logo_alignment="left"
+      data-width="320">
+    </div>
+
+    <p style="font-size:11px;color:#B0AEC8;margin-top:20px">
+      Only @sprinterhealth.com accounts can access this panel.
+    </p>
+  </div>
+</div>
+
+<!-- ── APP SHELL ── -->
+<div class="app" id="app">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+        <path d="M18 2C12.477 2 8 6.477 8 12c0 7.732 10 22 10 22S28 19.732 28 12c0-5.523-4.477-10-10-10z" fill="#7B68C8"/>
+        <path d="M10 13l4-4 3 5 4-8 3 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="sidebar-logo-text">sprinter <em>health</em></span>
+    </div>
+
+    <div class="sidebar-label">Manage</div>
+    <button class="nav-item active" onclick="showPage('catalog')">
+      <span class="nav-icon">🎁</span> Item catalog
+    </button>
+    <button class="nav-item" onclick="showPage('orders')">
+      <span class="nav-icon">📦</span> Orders
+    </button>
+    <button class="nav-item" onclick="showPage('points')">
+      <span class="nav-icon">⭐</span> Points
+    </button>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div>
+          <div id="user-name" style="color:rgba(255,255,255,0.7);font-size:12px"></div>
+          <div id="user-email" style="color:rgba(255,255,255,0.4);font-size:11px"></div>
+        </div>
+      </div>
+      <button class="sign-out-btn" onclick="signOut()">Sign out</button>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <main class="content">
+
+    <!-- ══ CATALOG PAGE ══ -->
+    <div class="page active" id="page-catalog">
+      <div class="page-header">
+        <h1 class="page-title">Item catalog</h1>
+        <button class="btn btn-primary" onclick="openItemForm()">+ Add item</button>
+      </div>
+
+      <div class="search-bar">
+        <input class="search-input" type="text" placeholder="Search items..." id="catalog-search" oninput="filterCatalog()">
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="setCatalogFilter('all', this)">All</button>
+          <button class="filter-tab" onclick="setCatalogFilter('active', this)">Active</button>
+          <button class="filter-tab" onclick="setCatalogFilter('inactive', this)">Inactive</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Points</th>
+                <th>Variants</th>
+                <th>Source</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="catalog-tbody">
+              <tr class="loading-row"><td colspan="6"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Add / Edit item form -->
+      <div class="card" id="item-form-card" style="display:none">
+        <div class="card-header">
+          <span class="card-title" id="item-form-title">Add new item</span>
+          <button class="btn btn-outline btn-sm" onclick="closeItemForm()">Cancel</button>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Item name *</label>
+            <input class="form-input" type="text" id="f-name" placeholder="e.g. Insulated tumbler">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Point cost *</label>
+            <input class="form-input" type="number" id="f-points" placeholder="e.g. 200" min="0">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea" id="f-desc" placeholder="Short description of the item..."></textarea>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Image URL</label>
+            <input class="form-input" type="url" id="f-image" placeholder="https://... (link to hosted product photo)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Variants</label>
+            <input class="form-input" type="text" id="f-variants" placeholder="S, M, L, XL (comma separated)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Source / vendor</label>
+            <input class="form-input" type="text" id="f-source" placeholder="e.g. Printful, local vendor">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <input class="form-input" type="text" id="f-category" placeholder="e.g. Apparel, Drinkware">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Active</label>
+            <select class="form-select" id="f-active">
+              <option value="TRUE">Active — visible in store</option>
+              <option value="FALSE">Inactive — hidden from store</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-footer">
+          <div style="font-size:12px;color:#8884AB">* Required fields</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline" onclick="closeItemForm()">Cancel</button>
+            <button class="btn btn-primary" onclick="saveItem()" id="save-item-btn">Save item</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ORDERS PAGE ══ -->
+    <div class="page" id="page-orders">
+      <div class="page-header">
+        <h1 class="page-title">Orders</h1>
+        <button class="btn btn-outline" onclick="loadOrders()">↻ Refresh</button>
+      </div>
+
+      <div class="stat-grid" id="order-stats">
+        <div class="stat-card">
+          <div class="stat-label">New orders</div>
+          <div class="stat-value" id="stat-new">—</div>
+          <div class="stat-sub">Ready to pick</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Picked</div>
+          <div class="stat-value" id="stat-picked">—</div>
+          <div class="stat-sub">Awaiting shipment</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Shipped</div>
+          <div class="stat-value" id="stat-shipped">—</div>
+          <div class="stat-sub">On their way</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Awaiting address</div>
+          <div class="stat-value" id="stat-awaiting">—</div>
+          <div class="stat-sub">Pending confirmation</div>
+        </div>
+      </div>
+
+      <div class="filter-tabs" style="margin-bottom:20px">
+        <button class="filter-tab active" onclick="setOrderFilter('all', this)">All</button>
+        <button class="filter-tab" onclick="setOrderFilter('new', this)">New</button>
+        <button class="filter-tab" onclick="setOrderFilter('picked', this)">Picked</button>
+        <button class="filter-tab" onclick="setOrderFilter('shipped', this)">Shipped</button>
+        <button class="filter-tab" onclick="setOrderFilter('awaiting address', this)">Awaiting address</button>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Employee</th>
+                <th>Item</th>
+                <th>Variant</th>
+                <th>Ship to</th>
+                <th>Status</th>
+                <th>Tracking</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="orders-tbody">
+              <tr class="loading-row"><td colspan="8"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ POINTS PAGE ══ -->
+    <div class="page" id="page-points">
+      <div class="page-header">
+        <h1 class="page-title">Points</h1>
+      </div>
+
+      <!-- Grant points form -->
+      <div class="card" style="margin-bottom:24px">
+        <div class="card-header">
+          <span class="card-title">Grant bonus points</span>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Employee ID *</label>
+            <input class="form-input" type="text" id="grant-emp-id" placeholder="e.g. EMP-jamietorres">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Points to grant *</label>
+            <input class="form-input" type="number" id="grant-points" placeholder="e.g. 100" min="1">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Reason *</label>
+            <input class="form-input" type="text" id="grant-reason" placeholder="e.g. Hackathon winner, peer recognition">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Approved by</label>
+            <input class="form-input" type="text" id="grant-approved-by" placeholder="Your name">
+          </div>
+        </div>
+        <div class="form-footer">
+          <div style="font-size:12px;color:#8884AB">Employee will be notified by email automatically</div>
+          <button class="btn btn-primary" onclick="grantPoints()" id="grant-btn">Grant points</button>
+        </div>
+      </div>
+
+      <!-- Employee ledger lookup -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Employee ledger lookup</span>
+        </div>
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
+          <div class="search-bar" style="margin-bottom:0">
+            <input class="search-input" type="text" id="ledger-search" placeholder="Enter employee ID to view their ledger...">
+            <button class="btn btn-outline" onclick="lookupLedger()">Look up</button>
+          </div>
+        </div>
+
+        <div id="ledger-result" style="display:none">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:15px;font-weight:600;color:var(--navy)" id="ledger-emp-name"></div>
+              <div style="font-size:13px;color:#8884AB" id="ledger-emp-id"></div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:11px;color:#8884AB;text-transform:uppercase;letter-spacing:0.05em">Current balance</div>
+              <div style="font-size:24px;font-weight:700;color:var(--purple)" id="ledger-balance"></div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Points</th>
+                  <th>Reason</th>
+                  <th>Added by</th>
+                </tr>
+              </thead>
+              <tbody id="ledger-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="ledger-empty" style="padding:32px;text-align:center;color:#8884AB;font-size:13px">
+          Enter an employee ID above to view their points history.
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+
+<script>
+// ================================================================
+// CONFIG — update these two values
+// ================================================================
+const ADMIN_CONFIG = {
+  // Paste your Apps Script Web App URL here (same one as index.html)
+  api_url:        "YOUR_APPS_SCRIPT_WEB_APP_URL",
+  // Your Google Workspace domain — only accounts from this domain can log in
+  allowed_domain: "sprinterhealth.com",
+};
+
+// ================================================================
+// STATE
+// ================================================================
+let CURRENT_USER  = null;
+let ALL_CATALOG   = [];
+let ALL_ORDERS    = [];
+let CATALOG_FILTER = "all";
+let ORDER_FILTER   = "all";
+let EDITING_ITEM   = null; // item_id of item being edited, null = new
+
+// ================================================================
+// GOOGLE AUTH
+// ================================================================
+function handleGoogleLogin(response) {
+  const payload = parseJwt(response.credential);
+
+  if (!payload.email.endsWith("@" + ADMIN_CONFIG.allowed_domain)) {
+    document.getElementById("auth-error").classList.add("show");
+    return;
+  }
+
+  CURRENT_USER = payload;
+  document.getElementById("auth-gate").style.display = "none";
+  document.getElementById("app").classList.add("show");
+
+  // Set user info in sidebar
+  const initials = (payload.given_name?.[0] || "") + (payload.family_name?.[0] || "");
+  document.getElementById("user-avatar").textContent = initials.toUpperCase();
+  document.getElementById("user-name").textContent   = payload.name;
+  document.getElementById("user-email").textContent  = payload.email;
+
+  // Load initial data
+  loadCatalog();
+}
+
+function signOut() {
+  google.accounts.id.disableAutoSelect();
+  CURRENT_USER = null;
+  document.getElementById("auth-gate").style.display = "flex";
+  document.getElementById("app").classList.remove("show");
+}
+
+function parseJwt(token) {
+  const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+  return JSON.parse(atob(base64));
+}
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.getElementById("page-" + page).classList.add("active");
+  event.currentTarget.classList.add("active");
+
+  if (page === "orders") loadOrders();
+  if (page === "points") { /* ledger loads on demand */ }
+}
+
+// ================================================================
+// CATALOG
+// ================================================================
+async function loadCatalog() {
+  try {
+    const data = await apiFetch("adminGetCatalog");
+    ALL_CATALOG = data;
+    renderCatalog();
+  } catch (e) {
+    showToast("Failed to load catalog: " + e.message, "error");
+  }
+}
+
+function renderCatalog() {
+  const search  = (document.getElementById("catalog-search").value || "").toLowerCase();
+  const tbody   = document.getElementById("catalog-tbody");
+
+  let items = ALL_CATALOG.filter(item => {
+    const matchFilter =
+      CATALOG_FILTER === "all" ||
+      (CATALOG_FILTER === "active"   && (item.active === "TRUE"  || item.active === true)) ||
+      (CATALOG_FILTER === "inactive" && (item.active === "FALSE" || item.active === false));
+    const matchSearch = !search ||
+      (item.name        || "").toLowerCase().includes(search) ||
+      (item.description || "").toLowerCase().includes(search) ||
+      (item.source      || "").toLowerCase().includes(search);
+    return matchFilter && matchSearch;
+  });
+
+  if (items.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">🎁</div><h3>No items found</h3><p>Try adjusting your search or filter.</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = items.map(item => {
+    const isActive = item.active === "TRUE" || item.active === true;
+    return `
+      <tr>
+        <td>
+          <div style="font-weight:600;color:var(--navy)">${esc(item.name)}</div>
+          <div style="font-size:12px;color:#8884AB">${esc(item.description || "").substring(0, 60)}${(item.description || "").length > 60 ? "..." : ""}</div>
+        </td>
+        <td><strong>${parseInt(item.point_cost).toLocaleString()}</strong> pts</td>
+        <td style="font-size:12px;color:#8884AB">${esc(item.variants || "—")}</td>
+        <td style="font-size:12px;color:#8884AB">${esc(item.source || "—")}</td>
+        <td><span class="badge ${isActive ? "badge-active" : "badge-inactive"}">${isActive ? "Active" : "Inactive"}</span></td>
+        <td>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-outline btn-sm" onclick='editItem(${JSON.stringify(item)})'>Edit</button>
+            <button class="btn ${isActive ? "btn-danger" : "btn-success"} btn-sm" onclick="toggleActive('${esc(item.item_id)}', ${isActive})">
+              ${isActive ? "Deactivate" : "Activate"}
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function filterCatalog() { renderCatalog(); }
+
+function setCatalogFilter(filter, el) {
+  CATALOG_FILTER = filter;
+  document.querySelectorAll("#page-catalog .filter-tab").forEach(t => t.classList.remove("active"));
+  el.classList.add("active");
+  renderCatalog();
+}
+
+function openItemForm(item) {
+  EDITING_ITEM = null;
+  document.getElementById("item-form-title").textContent = "Add new item";
+  document.getElementById("save-item-btn").textContent   = "Save item";
+  clearItemForm();
+  document.getElementById("item-form-card").style.display = "block";
+  document.getElementById("item-form-card").scrollIntoView({ behavior: "smooth" });
+}
+
+function editItem(item) {
+  EDITING_ITEM = item.item_id;
+  document.getElementById("item-form-title").textContent = "Edit item";
+  document.getElementById("save-item-btn").textContent   = "Update item";
+  document.getElementById("f-name").value     = item.name        || "";
+  document.getElementById("f-points").value   = item.point_cost  || "";
+  document.getElementById("f-desc").value     = item.description || "";
+  document.getElementById("f-image").value    = item.image_url   || "";
+  document.getElementById("f-variants").value = item.variants    || "";
+  document.getElementById("f-source").value   = item.source      || "";
+  document.getElementById("f-category").value = item.category    || "";
+  document.getElementById("f-active").value   = (item.active === "TRUE" || item.active === true) ? "TRUE" : "FALSE";
+  document.getElementById("item-form-card").style.display = "block";
+  document.getElementById("item-form-card").scrollIntoView({ behavior: "smooth" });
+}
+
+function closeItemForm() {
+  document.getElementById("item-form-card").style.display = "none";
+  clearItemForm();
+  EDITING_ITEM = null;
+}
+
+function clearItemForm() {
+  ["f-name","f-points","f-desc","f-image","f-variants","f-source","f-category"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+  document.getElementById("f-active").value = "TRUE";
+}
+
+async function saveItem() {
+  const name   = document.getElementById("f-name").value.trim();
+  const points = document.getElementById("f-points").value.trim();
+
+  if (!name || !points) {
+    showToast("Item name and point cost are required.", "error");
+    return;
+  }
+
+  const payload = {
+    item_id:    EDITING_ITEM || "",
+    name,
+    point_cost: points,
+    description: document.getElementById("f-desc").value.trim(),
+    image_url:   document.getElementById("f-image").value.trim(),
+    variants:    document.getElementById("f-variants").value.trim(),
+    source:      document.getElementById("f-source").value.trim(),
+    category:    document.getElementById("f-category").value.trim(),
+    active:      document.getElementById("f-active").value,
+    tier:        "any",
+  };
+
+  const btn = document.getElementById("save-item-btn");
+  btn.disabled = true;
+  btn.textContent = "Saving...";
+
+  try {
+    await apiFetch("adminSaveItem", payload);
+    showToast(EDITING_ITEM ? "Item updated!" : "Item added to catalog!", "success");
+    closeItemForm();
+    await loadCatalog();
+  } catch (e) {
+    showToast("Failed to save item: " + e.message, "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = EDITING_ITEM ? "Update item" : "Save item";
+  }
+}
+
+async function toggleActive(itemId, currentlyActive) {
+  try {
+    await apiFetch("adminToggleItem", { item_id: itemId, active: currentlyActive ? "FALSE" : "TRUE" });
+    showToast(currentlyActive ? "Item deactivated." : "Item is now active!", "success");
+    await loadCatalog();
+  } catch (e) {
+    showToast("Failed to update item: " + e.message, "error");
+  }
+}
+
+// ================================================================
+// ORDERS
+// ================================================================
+async function loadOrders() {
+  document.getElementById("orders-tbody").innerHTML =
+    `<tr class="loading-row"><td colspan="8"><div class="spinner"></div></td></tr>`;
+  try {
+    const data = await apiFetch("adminGetOrders");
+    ALL_ORDERS = data;
+    renderOrders();
+    renderOrderStats();
+  } catch (e) {
+    showToast("Failed to load orders: " + e.message, "error");
+  }
+}
+
+function renderOrderStats() {
+  const count = status => ALL_ORDERS.filter(o => o.status === status).length;
+  document.getElementById("stat-new").textContent      = count("new");
+  document.getElementById("stat-picked").textContent   = count("picked");
+  document.getElementById("stat-shipped").textContent  = count("shipped");
+  document.getElementById("stat-awaiting").textContent = count("awaiting address");
+}
+
+function renderOrders() {
+  const tbody  = document.getElementById("orders-tbody");
+  const orders = ORDER_FILTER === "all"
+    ? ALL_ORDERS
+    : ALL_ORDERS.filter(o => o.status === ORDER_FILTER);
+
+  if (orders.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><div class="empty-icon">📦</div><h3>No orders found</h3><p>Orders will appear here once employees make selections.</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = orders.map(order => `
+    <tr>
+      <td style="font-size:12px;font-family:monospace;color:#8884AB">${esc(order.order_id)}</td>
+      <td>
+        <div style="font-weight:500">${esc(order.full_name)}</div>
+        <div style="font-size:11px;color:#8884AB">Year ${esc(order.anniversary_year)}</div>
+      </td>
+      <td>${esc(order.item_name)}</td>
+      <td style="font-size:12px;color:#8884AB">${esc(order.variant || "—")}</td>
+      <td style="font-size:12px;max-width:160px;word-break:break-word">${esc(order.shipping_address)}</td>
+      <td><span class="badge badge-${(order.status || "").replace(" ","-")}">${esc(order.status)}</span></td>
+      <td>
+        <input
+          style="width:130px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif"
+          type="text"
+          value="${esc(order.tracking_number || "")}"
+          placeholder="Add tracking..."
+          onchange="updateTracking('${esc(order.order_id)}', this.value)"
+        >
+      </td>
+      <td>
+        <select
+          style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;background:white"
+          onchange="updateOrderStatus('${esc(order.order_id)}', this.value)"
+        >
+          <option value="new"             ${order.status === "new"             ? "selected" : ""}>New</option>
+          <option value="awaiting address"${order.status === "awaiting address"? "selected" : ""}>Awaiting address</option>
+          <option value="picked"          ${order.status === "picked"          ? "selected" : ""}>Picked</option>
+          <option value="shipped"         ${order.status === "shipped"         ? "selected" : ""}>Shipped</option>
+        </select>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function setOrderFilter(filter, el) {
+  ORDER_FILTER = filter;
+  document.querySelectorAll("#page-orders .filter-tab").forEach(t => t.classList.remove("active"));
+  el.classList.add("active");
+  renderOrders();
+}
+
+async function updateOrderStatus(orderId, newStatus) {
+  try {
+    await apiFetch("adminUpdateOrder", { order_id: orderId, status: newStatus });
+    const order = ALL_ORDERS.find(o => o.order_id === orderId);
+    if (order) order.status = newStatus;
+    renderOrderStats();
+    showToast("Order status updated.", "success");
+  } catch (e) {
+    showToast("Failed to update order: " + e.message, "error");
+  }
+}
+
+async function updateTracking(orderId, tracking) {
+  try {
+    await apiFetch("adminUpdateOrder", { order_id: orderId, tracking_number: tracking });
+    const order = ALL_ORDERS.find(o => o.order_id === orderId);
+    if (order) order.tracking_number = tracking;
+    showToast("Tracking number saved.", "success");
+  } catch (e) {
+    showToast("Failed to save tracking: " + e.message, "error");
+  }
+}
+
+// ================================================================
+// POINTS
+// ================================================================
+async function grantPoints() {
+  const empId      = document.getElementById("grant-emp-id").value.trim();
+  const points     = parseInt(document.getElementById("grant-points").value);
+  const reason     = document.getElementById("grant-reason").value.trim();
+  const approvedBy = document.getElementById("grant-approved-by").value.trim();
+
+  if (!empId || !points || !reason) {
+    showToast("Employee ID, points, and reason are required.", "error");
+    return;
+  }
+
+  const btn = document.getElementById("grant-btn");
+  btn.disabled = true;
+  btn.textContent = "Granting...";
+
+  try {
+    await apiFetch("adminGrantPoints", { employee_id: empId, points, reason, approved_by: approvedBy });
+    showToast("Points granted! Employee will be notified by email.", "success");
+    document.getElementById("grant-emp-id").value      = "";
+    document.getElementById("grant-points").value      = "";
+    document.getElementById("grant-reason").value      = "";
+    document.getElementById("grant-approved-by").value = "";
+  } catch (e) {
+    showToast("Failed to grant points: " + e.message, "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Grant points";
+  }
+}
+
+async function lookupLedger() {
+  const empId = document.getElementById("ledger-search").value.trim();
+  if (!empId) return;
+
+  document.getElementById("ledger-result").style.display = "none";
+  document.getElementById("ledger-empty").textContent    = "Loading...";
+
+  try {
+    const data = await apiFetch("adminGetLedger", { employee_id: empId });
+
+    document.getElementById("ledger-emp-name").textContent = data.full_name || empId;
+    document.getElementById("ledger-emp-id").textContent   = empId;
+    document.getElementById("ledger-balance").textContent  = (data.balance || 0).toLocaleString() + " pts";
+
+    const tbody = document.getElementById("ledger-tbody");
+    if (!data.entries || data.entries.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#8884AB">No transactions yet.</td></tr>`;
+    } else {
+      tbody.innerHTML = data.entries.map(entry => {
+        const pts = parseInt(entry.points);
+        const cls = pts >= 0 ? "ledger-row-credit" : "ledger-row-debit";
+        return `
+          <tr>
+            <td style="font-size:12px;color:#8884AB">${esc(formatDate(entry.timestamp))}</td>
+            <td><span class="badge badge-new" style="font-size:11px">${esc(entry.type)}</span></td>
+            <td class="${cls}">${pts >= 0 ? "+" : ""}${pts.toLocaleString()} pts</td>
+            <td style="font-size:13px">${esc(entry.reason)}</td>
+            <td style="font-size:12px;color:#8884AB">${esc(entry.added_by)}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    document.getElementById("ledger-result").style.display = "block";
+    document.getElementById("ledger-empty").textContent    = "";
+    document.getElementById("ledger-empty").style.display  = "none";
+
+  } catch (e) {
+    document.getElementById("ledger-empty").textContent   = "Employee not found. Check the ID and try again.";
+    document.getElementById("ledger-empty").style.display = "block";
+  }
+}
+
+// ================================================================
+// API HELPER
+// ================================================================
+async function apiFetch(action, params = {}) {
+  const url = new URL(ADMIN_CONFIG.api_url);
+  url.searchParams.set("action", action);
+  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error("API error: " + res.status);
+
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error || "Unknown error");
+  return json.data;
+}
+
+// ================================================================
+// UTILITIES
+// ================================================================
+function showToast(msg, type = "") {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.className   = "toast show " + type;
+  setTimeout(() => { toast.className = "toast"; }, 3500);
+}
+
+function esc(str) {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function formatDate(ts) {
+  if (!ts) return "—";
+  const d = new Date(ts);
+  return isNaN(d) ? ts : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+</script>
+</body>
+</html>
