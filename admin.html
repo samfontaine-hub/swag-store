@@ -543,7 +543,7 @@
 
     <!-- Google Sign In button renders here -->
     <div id="g_id_onload"
-      data-client_id="818919234438-husrgiu1s48qn63d8t7l2n8bbhba9nhh.apps.googleusercontent.com"
+      data-client_id="YOUR_GOOGLE_OAUTH_CLIENT_ID"
       data-callback="handleGoogleLogin"
       data-auto_prompt="false">
     </div>
@@ -841,7 +841,7 @@
 // ================================================================
 const ADMIN_CONFIG = {
   // Paste your Apps Script Web App URL here (same one as index.html)
-  api_url:        "https://script.google.com/macros/s/AKfycbzsRPOLW7U9pNwo6-s6VdOikPLx_HtGkd_XYJAgoakGC1jv1aRVRYQ-0OO_yUL-KaUp/exec",
+  api_url:        "YOUR_APPS_SCRIPT_WEB_APP_URL",
   // Your Google Workspace domain — only accounts from this domain can log in
   allowed_domain: "sprinterhealth.com",
 };
@@ -852,6 +852,7 @@ const ADMIN_CONFIG = {
 let CURRENT_USER  = null;
 let ALL_CATALOG   = [];
 let ALL_ORDERS    = [];
+let CATALOG_MAP   = {}; // lookup by item_id for safe edit access
 let CATALOG_FILTER = "all";
 let ORDER_FILTER   = "all";
 let EDITING_ITEM   = null; // item_id of item being edited, null = new
@@ -919,9 +920,6 @@ async function loadCatalog() {
   }
 }
 
-// Add this at the top of your script section, near the other state variables
-let CATALOG_MAP = {};
-
 function renderCatalog() {
   const search  = (document.getElementById("catalog-search").value || "").toLowerCase();
   const tbody   = document.getElementById("catalog-tbody");
@@ -938,7 +936,7 @@ function renderCatalog() {
     return matchFilter && matchSearch;
   });
 
-  // Store items in map for safe lookup by ID
+  // Store in map for safe lookup — avoids JSON.stringify in onclick breaking on special chars
   CATALOG_MAP = {};
   items.forEach(item => { CATALOG_MAP[item.item_id] = item; });
 
@@ -953,7 +951,7 @@ function renderCatalog() {
       <tr>
         <td>
           <div style="font-weight:600;color:var(--navy)">${esc(item.name)}</div>
-          <div style="font-size:12px;color:#8884AB">${esc((item.description || "").substring(0, 60))}${(item.description || "").length > 60 ? "..." : ""}</div>
+          <div style="font-size:12px;color:#8884AB">${esc(item.description || "").substring(0, 60)}${(item.description || "").length > 60 ? "..." : ""}</div>
         </td>
         <td><strong>${parseInt(item.point_cost).toLocaleString()}</strong> pts</td>
         <td style="font-size:12px;color:#8884AB">${esc(item.variants || "—")}</td>
@@ -974,12 +972,10 @@ function renderCatalog() {
 
 function editItemById(itemId) {
   const item = CATALOG_MAP[itemId];
-  if (!item) {
-    showToast("Item not found — try refreshing.", "error");
-    return;
-  }
+  if (!item) { showToast("Item not found — try refreshing.", "error"); return; }
   editItem(item);
 }
+
 function filterCatalog() { renderCatalog(); }
 
 function setCatalogFilter(filter, el) {
