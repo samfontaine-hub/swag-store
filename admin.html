@@ -919,6 +919,9 @@ async function loadCatalog() {
   }
 }
 
+// Add this at the top of your script section, near the other state variables
+let CATALOG_MAP = {};
+
 function renderCatalog() {
   const search  = (document.getElementById("catalog-search").value || "").toLowerCase();
   const tbody   = document.getElementById("catalog-tbody");
@@ -935,6 +938,10 @@ function renderCatalog() {
     return matchFilter && matchSearch;
   });
 
+  // Store items in map for safe lookup by ID
+  CATALOG_MAP = {};
+  items.forEach(item => { CATALOG_MAP[item.item_id] = item; });
+
   if (items.length === 0) {
     tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">🎁</div><h3>No items found</h3><p>Try adjusting your search or filter.</p></div></td></tr>`;
     return;
@@ -946,7 +953,7 @@ function renderCatalog() {
       <tr>
         <td>
           <div style="font-weight:600;color:var(--navy)">${esc(item.name)}</div>
-          <div style="font-size:12px;color:#8884AB">${esc(item.description || "").substring(0, 60)}${(item.description || "").length > 60 ? "..." : ""}</div>
+          <div style="font-size:12px;color:#8884AB">${esc((item.description || "").substring(0, 60))}${(item.description || "").length > 60 ? "..." : ""}</div>
         </td>
         <td><strong>${parseInt(item.point_cost).toLocaleString()}</strong> pts</td>
         <td style="font-size:12px;color:#8884AB">${esc(item.variants || "—")}</td>
@@ -954,7 +961,7 @@ function renderCatalog() {
         <td><span class="badge ${isActive ? "badge-active" : "badge-inactive"}">${isActive ? "Active" : "Inactive"}</span></td>
         <td>
           <div style="display:flex;gap:6px">
-            <button class="btn btn-outline btn-sm" onclick='editItem(${JSON.stringify(item)})'>Edit</button>
+            <button class="btn btn-outline btn-sm" onclick="editItemById('${esc(item.item_id)}')">Edit</button>
             <button class="btn ${isActive ? "btn-danger" : "btn-success"} btn-sm" onclick="toggleActive('${esc(item.item_id)}', ${isActive})">
               ${isActive ? "Deactivate" : "Activate"}
             </button>
@@ -965,6 +972,14 @@ function renderCatalog() {
   }).join("");
 }
 
+function editItemById(itemId) {
+  const item = CATALOG_MAP[itemId];
+  if (!item) {
+    showToast("Item not found — try refreshing.", "error");
+    return;
+  }
+  editItem(item);
+}
 function filterCatalog() { renderCatalog(); }
 
 function setCatalogFilter(filter, el) {
